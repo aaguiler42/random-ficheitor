@@ -46,13 +46,6 @@ function loadOrCreateDailyState() {
   return dailyState;
 }
 
-function getMillisUntil(hour, minutes) {
-  const now = new Date();
-  const target = new Date();
-  target.setHours(parseInt(hour, 10), minutes, 0, 0);
-  return target.getTime() - now.getTime();
-}
-
 function scheduleSlots(state) {
   const slots = [
     { slot: 1, hour: process.env.START_HOUR, minutes: state.workMinutes },
@@ -62,7 +55,7 @@ function scheduleSlots(state) {
   ];
 
   for (const { slot, hour, minutes } of slots) {
-    const delay = getMillisUntil(hour, minutes);
+    const delay = utils.getMillisUntil(hour, minutes);
     if (delay > 0) {
       setTimeout(main, delay);
       console.log(`Slot ${slot} scheduled at ${utils.padLeft(hour)}:${utils.padLeft(minutes)}`);

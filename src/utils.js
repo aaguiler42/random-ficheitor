@@ -1,11 +1,28 @@
 const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const TIMEZONE = "Europe/Madrid";
 
 function buildAuthorizationHeader(accessToken) {
   return { authorization: `Bearer ${accessToken}` };
 }
 
 function getTodayDate() {
-  return dayjs().format("YYYY-MM-DD");
+  return dayjs().tz(TIMEZONE).format("YYYY-MM-DD");
+}
+
+function getMillisUntil(hour, minutes) {
+  const now = dayjs();
+  const todayMadrid = now.tz(TIMEZONE).format("YYYY-MM-DD");
+  const target = dayjs.tz(
+    `${todayMadrid}T${padLeft(hour)}:${padLeft(minutes)}:00`,
+    TIMEZONE
+  );
+  return target.valueOf() - now.valueOf();
 }
 
 function padLeft(value) {
@@ -51,6 +68,7 @@ function buildSign(userId, slot, minutes) {
 module.exports = {
   buildAuthorizationHeader,
   getTodayDate,
+  getMillisUntil,
   padLeft,
   buildSign,
 };
